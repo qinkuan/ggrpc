@@ -36,52 +36,52 @@
         <dependencies>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-common</artifactId>
+                <artifactId>ggrpc-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-registry</artifactId>
+                <artifactId>ggrpc-registry</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-registry-default</artifactId>
+                <artifactId>ggrpc-registry-default</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-remoting</artifactId>
+                <artifactId>ggrpc-remoting</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-example</artifactId>
+                <artifactId>ggrpc-example</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-client</artifactId>
+                <artifactId>ggrpc-client</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-example</artifactId>
+                <artifactId>ggrpc-example</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-example</artifactId>
+                <artifactId>ggrpc-example</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-spring-support</artifactId>
+                <artifactId>ggrpc-spring-support</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>${project.groupId}</groupId>
-                <artifactId>laopopo-monitor</artifactId>
+                <artifactId>ggrpc-monitor</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
