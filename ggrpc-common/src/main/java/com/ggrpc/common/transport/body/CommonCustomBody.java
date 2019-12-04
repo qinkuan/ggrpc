@@ -1,8 +1,7 @@
 package com.ggrpc.common.transport.body;
 
 
-import exception.remoting.RemotingCommmonCustomException;
-
+import com.ggrpc.common.exception.remoting.RemotingCommmonCustomException;
 /**
  * 
  * @author BazingaLyn
