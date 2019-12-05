@@ -5,7 +5,7 @@
  * Description:
  */
 
-package com.ggrpc.remoting.encode;
+package com.ggrpc.remoting.netty.encode;
 
 import com.ggrpc.common.exception.protocal.GGprotocol;
 import com.ggrpc.common.serialization.SerializerHolder;
