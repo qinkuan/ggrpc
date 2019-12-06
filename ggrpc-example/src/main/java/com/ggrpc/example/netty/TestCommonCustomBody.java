@@ -5,10 +5,8 @@
  * Description:
  */
 
-package com.ggrpc.common.serialization.entity;
+package com.ggrpc.example.netty;
 
-import com.ggrpc.common.exception.remoting.RemotingCommmonCustomException;
-import com.ggrpc.common.serialization.Serializer;
 import com.ggrpc.common.transport.body.CommonCustomBody;
 
 import java.io.Serializable;

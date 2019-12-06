@@ -1,4 +1,4 @@
-package com.ggrpc.remoting.decode;
+package com.ggrpc.remoting.netty.decode;
 
 import com.ggrpc.common.exception.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingContextException;
