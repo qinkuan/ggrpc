@@ -7,6 +7,7 @@
 
 package com.ggrpc.remoting;
 
+import com.ggrpc.common.exception.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.utils.Pair;
@@ -17,6 +18,7 @@ import com.ggrpc.remoting.model.RemotingTransporter;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +28,9 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.ggrpc.common.exception.protocal.GGprotocol.REQUEST_REMOTING;
+import static com.ggrpc.common.exception.protocal.GGprotocol.RESPONSE_REMOTING;
 
 public abstract class NettyRemotingBase {
     private static final Logger logger = LoggerFactory.getLogger(NettyRemotingBase.class);
@@ -40,7 +45,6 @@ public abstract class NettyRemotingBase {
 
     protected final ExecutorService publicExecutor = Executors.newFixedThreadPool(4, new ThreadFactory() {
         private AtomicInteger threadIndex = new AtomicInteger(0);
-
 
         @Override
         public Thread newThread(Runnable r) {
@@ -95,4 +99,124 @@ public abstract class NettyRemotingBase {
             this.responseTable.remove(request.getOpaque());
         }
     }
+    //ChannelRead0方法对应的具体实现
+    protected void processMessageReceived(ChannelHandlerContext ctx, RemotingTransporter msg) {
+
+        if(logger.isDebugEnabled()){
+            logger.debug("channel [] received RemotingTransporter is [{}]",ctx.channel(),msg);
+        }
+
+        final RemotingTransporter remotingTransporter = msg;
+
+        if (remotingTransporter != null) {
+            switch (remotingTransporter.getTransporterType()) {
+                //作为server端 client端的请求的对应的处理
+                case REQUEST_REMOTING:
+                    processRemotingRequest(ctx, remotingTransporter);
+                    break;
+                //作为客户端，来自server端的响应的处理
+                case RESPONSE_REMOTING:
+                    processRemotingResponse(ctx, remotingTransporter);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    protected void processChannelInactive(final ChannelHandlerContext ctx) {
+        final Pair<NettyChannelInactiveProcessor, ExecutorService> pair = this.defaultChannelInactiveProcessor;
+        if(pair != null){
+
+            Runnable run = () -> {
+                try {
+                    pair.getKey().processChannelInactive(ctx);
+                } catch (RemotingSendRequestException | RemotingTimeoutException | InterruptedException e) {
+                    logger.error("server occor exception [{}]",e.getMessage());
+                }
+            };
+            try {
+                pair.getValue().submit(run);
+            } catch (Exception e) {
+                logger.error("server is busy,[{}]",e.getMessage());
+            }
+
+        }
+    }
+
+    protected void processRemotingRequest(final ChannelHandlerContext ctx, final RemotingTransporter remotingTransporter) {
+
+        final Pair<NettyRequestProcessor, ExecutorService> matchedPair = this.processorTable.get(remotingTransporter.getCode());
+        final Pair<NettyRequestProcessor, ExecutorService> pair =
+                null == matchedPair ? this.defaultRequestProcessor : matchedPair;
+        if (pair != null) {
+
+            Runnable run = new Runnable() {
+
+                @Override
+                public void run() {
+                    try {
+                        RPCHook rpcHook = NettyRemotingBase.this.getRPCHook();
+                        if (rpcHook != null) {
+                            rpcHook.doBeforeRequest(ConnectionUtils.parseChannelRemoteAddr(ctx.channel()), remotingTransporter);
+                        }
+                        final RemotingTransporter response = pair.getKey().processRequest(ctx, remotingTransporter);
+                        if (rpcHook != null) {
+                            rpcHook.doAfterResponse(ConnectionUtils.parseChannelRemoteAddr(ctx.channel()),
+                                    remotingTransporter, response);
+                        }
+                        if(null != response){
+                            ctx.writeAndFlush(response).addListener(new ChannelFutureListener() {
+
+                                @Override
+                                public void operationComplete(ChannelFuture future) throws Exception {
+                                    if(!future.isSuccess()){
+                                        logger.error("fail send response ,exception is [{}]",future.cause().getMessage());
+                                    }
+                                }
+                            });
+                        }
+                    } catch (Exception e) {
+                        logger.error("processor occur exception [{}]",e.getMessage());
+                        final RemotingTransporter response = RemotingTransporter.newInstance(remotingTransporter.getOpaque(), GGprotocol.RESPONSE_REMOTING, GGprotocol.HANDLER_ERROR, null);
+                        ctx.writeAndFlush(response);
+                    }
+                }
+            };
+            try {
+                pair.getValue().submit(run);
+            } catch (Exception e) {
+                logger.error("server is busy,[{}]",e.getMessage());
+                final RemotingTransporter response = RemotingTransporter.newInstance(remotingTransporter.getOpaque(), GGprotocol.RESPONSE_REMOTING, GGprotocol.HANDLER_BUSY, null);
+                ctx.writeAndFlush(response);
+            }
+        }
+    }
+
+    protected abstract RPCHook getRPCHook();
+
+    /**
+     * client处理server端返回的消息的处理
+     * @param ctx
+     * @param remotingTransporter
+     */
+    protected void processRemotingResponse(ChannelHandlerContext ctx, RemotingTransporter remotingTransporter) {
+        //从缓存篮子里拿出对应请求的对应响应的载体RemotingResponse
+        final RemotingResponse remotingResponse = responseTable.get(remotingTransporter.getOpaque());
+        //不超时的情况下
+        if(null != remotingResponse){
+            //首先先设值，这样会在countdownlatch wait之前把值赋上
+            remotingResponse.setRemotingTransporter(remotingTransporter);
+            //可以直接countdown
+            remotingResponse.putResponse(remotingTransporter);
+            //从篮子中移除
+            responseTable.remove(remotingTransporter.getOpaque());
+        }else {
+            logger.warn("received response but matched Id is removed from responseTable maybe timeout");
+            logger.warn(remotingTransporter.toString());
+        }
+    }
+
+
+
+
 }

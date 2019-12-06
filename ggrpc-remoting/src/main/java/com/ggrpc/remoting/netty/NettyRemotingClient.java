@@ -11,12 +11,18 @@ import com.ggrpc.common.exception.remoting.RemotingException;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.utils.NamedThreadFactory;
+import com.ggrpc.common.utils.NativeSupport;
+import com.ggrpc.common.utils.Pair;
+import com.ggrpc.remoting.ConnectionUtils;
 import com.ggrpc.remoting.NettyRemotingBase;
 import com.ggrpc.remoting.RPCHook;
 import com.ggrpc.remoting.model.NettyChannelInactiveProcessor;
 import com.ggrpc.remoting.model.NettyRequestProcessor;
 import com.ggrpc.remoting.model.RemotingTransporter;
+import com.ggrpc.remoting.netty.decode.RemotingTransporterDecoder;
+import com.ggrpc.remoting.netty.encode.RemotingTransporterEncoder;
 import com.ggrpc.remoting.netty.idle.ConnectorIdleStateTrigger;
+import com.ggrpc.remoting.netty.idle.IdleStateChecker;
 import com.ggrpc.remoting.watcher.ConnectionWatchdog;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.ByteBufAllocator;
@@ -40,6 +46,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.ggrpc.common.utils.Constants.WRITER_IDLE_TIME_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 public class NettyRemotingClient extends NettyRemotingBase implements RemotingClient {
@@ -242,7 +249,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
         }
 
         Pair<NettyRequestProcessor, ExecutorService> pair =
-                new Pair<NettyRequestProcessor, ExecutorService>(processor, executorThis);
+                new Pair<>(processor, executorThis);
         this.processorTable.put(requestCode, pair);
     }
 
@@ -298,9 +305,10 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
     }
 
     @Override
-    public void registerRPCHook(RPCHook rpcHook) {
+    public void registryRPCHook(RPCHook rocHook) {
         this.rpcHook = rpcHook;
     }
+
 
     @Override
     protected RPCHook getRPCHook() {
