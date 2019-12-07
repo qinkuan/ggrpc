@@ -27,5 +27,5 @@ public interface BaseRemotingService {
     /**
      * 注入钩子，Netty在处理的过程中可以嵌入一些方法，增加代码的灵活性
      */
-    void registryRPCHook(RPCHook rocHook);
+    void registryRPCHook(RPCHook rpcHook);
 }

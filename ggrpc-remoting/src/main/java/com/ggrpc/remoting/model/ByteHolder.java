@@ -8,9 +8,9 @@
 package com.ggrpc.remoting.model;
 
 public class ByteHolder {
-    private transient byte[] bytes;
+    public transient byte[] bytes;
 
-    public byte[] getBytes() {
+    public byte[] bytes() {
         return bytes;
     }
 

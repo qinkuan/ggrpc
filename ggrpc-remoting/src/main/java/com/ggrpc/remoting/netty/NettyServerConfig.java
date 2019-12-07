@@ -7,84 +7,57 @@
 
 package com.ggrpc.remoting.netty;
 
-public class NettyServerConfig {
-    private int clientWorkerThreads = 4;
-    private int clientCallbackExecutorThreads = Runtime.getRuntime().availableProcessors();
-    private long connectTimeoutMillis = 3000;
-    private long channelNotActiveInterval = 1000 * 60;
-    //format host:port,host:port
-    private String defaultAddress;
+import static com.ggrpc.common.utils.Constants.AVAILABLE_PROCESSORS;
 
-    private int clientChannelMaxIdleTimeSeconds = 120;
-
-    private int clientSocketSndBufSize = -1;
-    private int clientSocketRcvBufSize = -1;
+public class NettyServerConfig implements Cloneable{
+    private int listenPort = 8888;
+    private int serverWorkerThreads = AVAILABLE_PROCESSORS << 1;
+    private int channelInactiveHandlerThreads = 1;
+    private int serverSocketSndBufSize = -1;
+    private int serverSocketRcvBufSize = -1;
 
     private int writeBufferLowWaterMark = -1;
     private int writeBufferHighWaterMark = -1;
 
-    public int getClientWorkerThreads() {
-        return clientWorkerThreads;
+    public int getListenPort() {
+        return listenPort;
     }
 
-    public void setClientWorkerThreads(int clientWorkerThreads) {
-        this.clientWorkerThreads = clientWorkerThreads;
+    public void setListenPort(int listenPort) {
+        this.listenPort = listenPort;
     }
 
-    public int getClientCallbackExecutorThreads() {
-        return clientCallbackExecutorThreads;
+    public int getServerWorkerThreads() {
+        return serverWorkerThreads;
     }
 
-    public void setClientCallbackExecutorThreads(int clientCallbackExecutorThreads) {
-        this.clientCallbackExecutorThreads = clientCallbackExecutorThreads;
+    public void setServerWorkerThreads(int serverWorkerThreads) {
+        this.serverWorkerThreads = serverWorkerThreads;
     }
 
-    public long getConnectTimeoutMillis() {
-        return connectTimeoutMillis;
+
+    public int getChannelInactiveHandlerThreads() {
+        return channelInactiveHandlerThreads;
     }
 
-    public void setConnectTimeoutMillis(long connectTimeoutMillis) {
-        this.connectTimeoutMillis = connectTimeoutMillis;
+    public void setChannelInactiveHandlerThreads(int channelInactiveHandlerThreads) {
+        this.channelInactiveHandlerThreads = channelInactiveHandlerThreads;
     }
 
-    public long getChannelNotActiveInterval() {
-        return channelNotActiveInterval;
+    public int getServerSocketSndBufSize() {
+        return serverSocketSndBufSize;
     }
 
-    public void setChannelNotActiveInterval(long channelNotActiveInterval) {
-        this.channelNotActiveInterval = channelNotActiveInterval;
+    public void setServerSocketSndBufSize(int serverSocketSndBufSize) {
+        this.serverSocketSndBufSize = serverSocketSndBufSize;
     }
 
-    public String getDefaultAddress() {
-        return defaultAddress;
+    public int getServerSocketRcvBufSize() {
+        return serverSocketRcvBufSize;
     }
 
-    public void setDefaultAddress(String defaultAddress) {
-        this.defaultAddress = defaultAddress;
-    }
-
-    public int getClientChannelMaxIdleTimeSeconds() {
-        return clientChannelMaxIdleTimeSeconds;
-    }
-
-    public void setClientChannelMaxIdleTimeSeconds(int clientChannelMaxIdleTimeSeconds) {
-        this.clientChannelMaxIdleTimeSeconds = clientChannelMaxIdleTimeSeconds;
-    }
-
-    public int getClientSocketSndBufSize() {
-        return clientSocketSndBufSize;
-    }
-
-    public void setClientSocketSndBufSize(int clientSocketSndBufSize) {
-        this.clientSocketSndBufSize = clientSocketSndBufSize;
-    }
-
-    public int getClientSocketRcvBufSize() {
-        return clientSocketRcvBufSize;
-    }
-
-    public void setClientSocketRcvBufSize(int clientSocketRcvBufSize) {
-        this.clientSocketRcvBufSize = clientSocketRcvBufSize;
+    public void setServerSocketRcvBufSize(int serverSocketRcvBufSize) {
+        this.serverSocketRcvBufSize = serverSocketRcvBufSize;
     }
 
     public int getWriteBufferLowWaterMark() {
