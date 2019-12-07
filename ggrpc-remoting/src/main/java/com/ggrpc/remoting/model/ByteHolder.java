@@ -14,7 +14,7 @@ public class ByteHolder {
         return bytes;
     }
 
-    public void setBytes(byte[] bytes) {
+    public void bytes(byte[] bytes) {
         this.bytes = bytes;
     }
 

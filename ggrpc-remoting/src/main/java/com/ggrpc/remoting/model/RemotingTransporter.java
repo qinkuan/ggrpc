@@ -130,7 +130,7 @@ public class RemotingTransporter extends ByteHolder{
         remotingTransporter.setCode(sign);
         remotingTransporter.setTransporterType(type);
         remotingTransporter.setOpaque(id);
-        remotingTransporter.setBytes(bytes);
+        remotingTransporter.bytes(bytes);
         return remotingTransporter;
     }
 

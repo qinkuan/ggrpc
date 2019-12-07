@@ -2,8 +2,10 @@ package com.ggrpc.client.provider;
 
 import com.ggrpc.client.annotation.RPCService;
 import com.ggrpc.client.interceptor.ProviderProxyHandler;
+import com.ggrpc.client.provider.Controller.ProviderRegistryController;
 import com.ggrpc.client.provider.flow.control.ServiceFlowControllerManager;
 import com.ggrpc.client.provider.model.ServiceWrapper;
+import com.ggrpc.common.exception.protocal.GGprotocol;
 import com.ggrpc.common.exception.rpc.RpcWrapperException;
 import com.ggrpc.common.transport.body.PublishServiceCustomBody;
 import com.ggrpc.remoting.model.RemotingTransporter;
@@ -71,7 +73,7 @@ public class LocalServerWrapperManager {
                         commonCustomHeader.setFlowController(serviceWrapper.isFlowController());
                         commonCustomHeader.setMaxCallCountInMinute(serviceWrapper.getMaxCallCountInMinute());
 
-                        RemotingTransporter remotingTransporter =  RemotingTransporter.createRequestTransporter(LaopopoProtocol.PUBLISH_SERVICE, commonCustomHeader);
+                        RemotingTransporter remotingTransporter =  RemotingTransporter.createRequestTransporter(GGprotocol.PUBLISH_SERVICE, commonCustomHeader);
                         remotingTransporters.add(remotingTransporter);
                     }
                 }
