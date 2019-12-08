@@ -52,20 +52,21 @@ public class ProviderRPCController {
             byte[] bytes = request.bytes();
             requestSize = bytes.length;
             request.bytes(null);
-
+            // 获取到请求实体
             body = serializerImpl().readObject(bytes, RequestCustomBody.class);
 
             request.setCustomHeader(body);
             serviceName = body.getServiceName();
-
+            // 累加请求的入参大小
             ServiceMeterManager.incrementRequestSize(serviceName, requestSize);
+            // 增加一次调用次数
             ServiceMeterManager.incrementCallTimes(serviceName);
 
         } catch (Exception e) {
             rejected(BAD_REQUEST, channel, request,serviceName);
             return;
         }
-
+        // 获取到相应的服务和对应的编织类
         final Pair<DefaultServiceProviderContainer.CurrentServiceState, ServiceWrapper> pair = defaultProvider.getProviderController().getProviderContainer().lookupService(serviceName);
         if (pair == null || pair.getValue() == null) {
             rejected(SERVICE_NOT_FOUND, channel, request,serviceName);
@@ -82,7 +83,7 @@ public class ProviderRPCController {
             }
         }
 
-
+        //对请求进行核心处理
         process(pair,request,channel,serviceName,body.getTimestamp());
     }
 

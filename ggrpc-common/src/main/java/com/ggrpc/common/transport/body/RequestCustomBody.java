@@ -12,7 +12,7 @@ public class RequestCustomBody implements CommonCustomBody{
     private static final AtomicLong invokeIdGenerator = new AtomicLong(0);
 
 
-
+    // 用雪花算法生成唯一id
     private final long invokeId; //调用的Id,全局只有一个
     private String serviceName;  //调用的服务名
     private Object[] args;       //调用服务的参数

@@ -4,6 +4,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class ServiceMeterManager {
+
+
+    /*1）通过限制单位时间段内调用量来限流
+    2）通过限制系统的并发调用程度来限流
+    3）使用漏桶（Leaky Bucket）算法来进行限流
+    4）使用令牌桶（Token Bucket）算法来进行限流
+    * */
     //key是serviceName
     private static ConcurrentMap<String, Meter> globalMeterManager = new ConcurrentHashMap<String, Meter>();
 
