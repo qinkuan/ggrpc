@@ -19,7 +19,7 @@ public class DefaultServiceProviderContainer implements ServiceProviderContainer
 
     public void registerService(String uniqueKey, ServiceWrapper serviceWrapper) {
 
-        Pair<CurrentServiceState, ServiceWrapper> pair = new Pair<DefaultServiceProviderContainer.CurrentServiceState, ServiceWrapper>();
+        Pair<CurrentServiceState, ServiceWrapper> pair = new Pair<CurrentServiceState, ServiceWrapper>();
         pair.setKey(new CurrentServiceState());
         pair.setValue(serviceWrapper);
         serviceProviders.put(uniqueKey, pair);

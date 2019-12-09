@@ -2,8 +2,10 @@ package com.ggrpc.common.transport.body;
 
 import com.ggrpc.common.exception.remoting.RemotingCommmonCustomException;
 import com.ggrpc.common.loadbalance.LoadBalanceStrategy;
-import com.ggrpc.common.rpc.Address;
+
 import com.ggrpc.common.rpc.ManagerServiceRequestType;
+import com.ggrpc.common.rpc.RegisterMeta;
+import com.ggrpc.common.rpc.RegisterMeta.Address;
 import com.ggrpc.common.rpc.ServiceReviewState;
 
 public class ManagerServiceCustomBody implements CommonCustomBody{
@@ -35,7 +37,7 @@ public class ManagerServiceCustomBody implements CommonCustomBody{
         this.serviceReviewState = serviceReviewState;
     }
 
-    public Address getAddress() {
+    public RegisterMeta.Address getAddress() {
         return address;
     }
 

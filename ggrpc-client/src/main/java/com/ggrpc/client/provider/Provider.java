@@ -59,7 +59,7 @@ public interface Provider {
      * 需要暴露的实例
      * @param obj
      */
-    Provider publishService(Object ...obj);
+    Provider publishService(Object... obj);
 
     /**
      * 处理消费者的rpc请求
