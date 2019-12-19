@@ -10,6 +10,8 @@ package com.ggrpc.client.consumer;
 import com.ggrpc.common.exception.protocal.GGprotocol;
 import com.ggrpc.common.rpc.RegisterMeta;
 import com.ggrpc.common.utils.ChannelGroup;
+import com.ggrpc.common.utils.JUnsafe;
+import com.ggrpc.common.utils.NettyChannelGroup;
 import com.ggrpc.common.utils.UnresolvedAddress;
 import com.ggrpc.remoting.ConnectionUtils;
 import com.ggrpc.remoting.netty.NettyClientConfig;
@@ -20,6 +22,7 @@ import io.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -67,7 +70,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
         this.registryNettyRemotingClient.registerProcessor(GGprotocol.SUBCRIBE_SERVICE_CANCEL, new DefaultConsumerRegistryProcessor(this), null);
         this.registryNettyRemotingClient.registerProcessor(GGprotocol.CHANGE_LOADBALANCE, new DefaultConsumerRegistryProcessor(this), null);
     }
-
+    // 订阅服务
     @Override
     public SubscribeManager subscribeService(final String service) {
 
@@ -154,7 +157,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
                 }
                 return available;
             }
-
+            // 判断服务是否可用
             private boolean isServiceAvailable(String service) {
                 CopyOnWriteArrayList<ChannelGroup> list = DefaultConsumer.super.getChannelGroupByServiceName(service);
                 if(list == null){
@@ -168,7 +171,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
                 }
                 return false;
             }
-
+            // onsucceed
             private void onSucceed(boolean doSignal) {
                 if (doSignal) {
                     final ReentrantLock _look = lock;
@@ -333,7 +336,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
     public void setDefaultConsumerRegistry(DefaultConsumerRegistry defaultConsumerRegistry) {
         this.defaultConsumerRegistry = defaultConsumerRegistry;
     }
-
+    // 获取某个服务提供者机器provider对应的Channel组
     public ChannelGroup group(UnresolvedAddress address) {
 
         ChannelGroup group = addressGroups.get(address);

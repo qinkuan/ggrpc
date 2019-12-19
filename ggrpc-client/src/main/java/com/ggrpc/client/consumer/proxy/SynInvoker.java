@@ -40,6 +40,7 @@ public class SynInvoker {
 
     private Consumer consumer;
     private long timeoutMillis;
+    // 各方法超时时间
     private Map<String, Long> methodsSpecialTimeoutMillis;
     private LoadBalanceStrategy balanceStrategy;
 

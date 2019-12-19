@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * @description 代理工厂类，用于对服务接口的编织
+ * @description 代理工厂类，用于对服务接口的编织，
  */
 public class ProxyFactory<T> {
     private final Class<T> interfaceClass; 					//编织对象
@@ -30,13 +30,7 @@ public class ProxyFactory<T> {
     private Map<String, Long> methodsSpecialTimeoutMillis;  //每个方法特定的超时时间
     private LoadBalanceStrategy balanceStrategy;			//负载均衡的策略
 
-    public static <I> ProxyFactory<I> factory(Class<I> interfaceClass) {
-        ProxyFactory<I> factory = new ProxyFactory<>(interfaceClass);
-        // 初始化数据
-        factory.addresses = new ArrayList<UnresolvedAddress>();
 
-        return factory;
-    }
     /**
      * 设置接口对象
      * @param interfaceClass
@@ -44,6 +38,14 @@ public class ProxyFactory<T> {
     private ProxyFactory(Class<T> interfaceClass) {
         this.interfaceClass = interfaceClass;
     }
+
+    public static <I> ProxyFactory<I> factory(Class<I> interfaceClass) {
+        ProxyFactory<I> factory = new ProxyFactory<>(interfaceClass);
+        // 初始化数据
+        factory.addresses = new ArrayList<UnresolvedAddress>();
+        return factory;
+    }
+
 
     /**
      * 设置该代理工厂的唯一的消费端
@@ -86,7 +88,10 @@ public class ProxyFactory<T> {
         return this;
     }
 
-
+    /**
+     * 返回代理类
+     * @return
+     */
     public T newProxyInstance() {
         Method[] methods = interfaceClass.getMethods();
         if(methods == null || methods.length == 0){
@@ -96,7 +101,7 @@ public class ProxyFactory<T> {
         boolean isAnnotation = false;
 
         for(Method method : methods){
-
+            // 消费者的服务名称
             RPCConsumer consumerAnnotation = method.getAnnotation(RPCConsumer.class);
             if(null != consumerAnnotation){
                 isAnnotation = true;
@@ -105,6 +110,7 @@ public class ProxyFactory<T> {
 
             if(addresses != null && addresses.size() > 0){
                 for (UnresolvedAddress address : addresses) {
+                    // 根据服务名称，保存channel 组
                     consumer.addChannelGroup(serviceName, consumer.group(address));
 
                 }
