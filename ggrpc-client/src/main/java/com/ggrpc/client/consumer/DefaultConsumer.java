@@ -7,6 +7,11 @@
 
 package com.ggrpc.client.consumer;
 
+import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.rpc.RegisterMeta;
+import com.ggrpc.common.utils.ChannelGroup;
+import com.ggrpc.common.utils.UnresolvedAddress;
+import com.ggrpc.remoting.ConnectionUtils;
 import com.ggrpc.remoting.netty.NettyClientConfig;
 import com.ggrpc.remoting.netty.NettyRemotingClient;
 import io.netty.channel.Channel;
@@ -58,9 +63,9 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
     }
 
     private void registerProcessor() {
-        this.registryNettyRemotingClient.registerProcessor(LaopopoProtocol.SUBCRIBE_RESULT, new DefaultConsumerRegistryProcessor(this), null);
-        this.registryNettyRemotingClient.registerProcessor(LaopopoProtocol.SUBCRIBE_SERVICE_CANCEL, new DefaultConsumerRegistryProcessor(this), null);
-        this.registryNettyRemotingClient.registerProcessor(LaopopoProtocol.CHANGE_LOADBALANCE, new DefaultConsumerRegistryProcessor(this), null);
+        this.registryNettyRemotingClient.registerProcessor(GGprotocol.SUBCRIBE_RESULT, new DefaultConsumerRegistryProcessor(this), null);
+        this.registryNettyRemotingClient.registerProcessor(GGprotocol.SUBCRIBE_SERVICE_CANCEL, new DefaultConsumerRegistryProcessor(this), null);
+        this.registryNettyRemotingClient.registerProcessor(GGprotocol.CHANGE_LOADBALANCE, new DefaultConsumerRegistryProcessor(this), null);
     }
 
     @Override
