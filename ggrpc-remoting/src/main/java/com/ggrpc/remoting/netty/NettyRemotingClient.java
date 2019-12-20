@@ -48,7 +48,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import static com.ggrpc.common.utils.Constants.WRITER_IDLE_TIME_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-
+// 客户端netty连接
 public class NettyRemotingClient extends NettyRemotingBase implements RemotingClient {
 
     private static final Logger logger = LoggerFactory.getLogger(NettyRemotingClient.class);
@@ -71,13 +71,13 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
 
     private volatile int writeBufferHighWaterMark = -1;
     private volatile int writeBufferLowWaterMark = -1;
-
+    // 心跳拦截器
     private final ConnectorIdleStateTrigger idleStateTrigger = new ConnectorIdleStateTrigger();
 
     protected HashedWheelTimer timer = new HashedWheelTimer(new NamedThreadFactory("netty.timer"));
 
     private RPCHook rpcHook;
-    /* addr */
+    /* addr 存某个服务器对应得Channel*/
     private final ConcurrentHashMap<String, ChannelWrapper> channelTables = new ConcurrentHashMap<>();
 
     private boolean isReconnect = true;
@@ -175,7 +175,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
 
         return this.createChannel(addr);
     }
-
+    // 开启连接
     public Channel createChannel(String addr) throws InterruptedException {
 
         ChannelWrapper cw = this.channelTables.get(addr);

@@ -58,7 +58,9 @@ public class SynInvoker {
 
         String serviceName = rpcConsumer.serviceName();
         LoadBalanceStrategy _balanceStrategy = balanceStrategy;
+        // 根据负载均衡策略找到一个主机的ChannelGroup(可能有一条连接或者多条)
         ChannelGroup channelGroup = consumer.loadBalance(serviceName,_balanceStrategy);
+        // 如果目前没有连接则进行连接
         if (channelGroup == null || channelGroup.size() == 0) {
             //如果有channelGroup但是channel中却没有active的Channel的有可能是用户通过直连的方式去调用，我们需要去根据远程的地址去初始化channel
             if(channelGroup != null && channelGroup.getAddress() != null){

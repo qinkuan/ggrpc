@@ -63,6 +63,7 @@ public interface Consumer {
     /**
      *
      * @param address 该地址是提供者的地址
+     * 一般情况下只有一个
      * 一个服务提供者的地址可以维护一组channel，因为一个消费者实例与一个提供者之间的长链接数可以不止一个，不过当然一般情况下，一个就可以了
      * @return
      */

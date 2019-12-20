@@ -8,22 +8,24 @@
 package com.ggrpc.remoting.netty;
 
 public class NettyClientConfig {
+    // 客户端worker工作线程
     private int clientWorkerThreads = 4;
-
+    // 客户端回调线程
     private int clientCallbackExecutorThreads = Runtime.getRuntime().availableProcessors();
-
+    // 连接超时时间
     private long connectTimeoutMillis = 3000;
-
+    // 心跳超时时间
     private long channelNotActiveInterval = 1000 * 60;
 
-    //format host:port,host:port
+    // format host:port,host:port
+    // 默认地址
     private String defaultAddress;
-
+    // 最大空闲时间
     private int clientChannelMaxIdleTimeSeconds = 120;
-
+    // 缓存空间
     private int clientSocketSndBufSize = -1;
     private int clientSocketRcvBufSize = -1;
-
+    // 高低水位
     private int writeBufferLowWaterMark = -1;
     private int writeBufferHighWaterMark = -1;
 

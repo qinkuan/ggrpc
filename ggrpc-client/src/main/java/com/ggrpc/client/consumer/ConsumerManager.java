@@ -35,6 +35,7 @@ public class ConsumerManager {
     private DefaultConsumer defaultConsumer; //consumer模块的代码手持defaultConsumer好办事
     // 读写锁用于更新本地注册列表
     private final ReentrantReadWriteLock registriesLock = new ReentrantReadWriteLock();
+    // 本地注册信息
     private final Map<String, List<RegisterMeta>> registries = new ConcurrentHashMap<>();
     public ConsumerManager(DefaultConsumer defaultConsumer) {
         this.defaultConsumer = defaultConsumer;
@@ -54,7 +55,7 @@ public class ConsumerManager {
         // 获取到返回结果
         AckCustomBody ackCustomBody = new AckCustomBody(subcribeResponse.getOpaque(), false);
         RemotingTransporter responseTransporter = RemotingTransporter.createResponseTransporter(GGprotocol.ACK, ackCustomBody, subcribeResponse.getOpaque());
-
+        // 序列化成实体类
         SubcribeResultCustomBody subcribeResultCustomBody = serializerImpl().readObject(subcribeResponse.bytes(), SubcribeResultCustomBody.class);
 
         String serviceName = null;
@@ -65,6 +66,7 @@ public class ConsumerManager {
                 if (null == serviceName) {
                     serviceName = registerMeta.getServiceName();
                 }
+                // 更新本地注册表(本地已注册信息)
                 notify(serviceName, registerMeta, NotifyListener.NotifyEvent.CHILD_ADDED);
             }
         }
@@ -105,12 +107,11 @@ public class ConsumerManager {
         if(logger.isDebugEnabled()){
             logger.debug("handler change loadBalance strategy [{}] and channel [{}]",request,channel);
         }
-
+        //+++++++++++++++++++++++++++++++++++++++ 这段代码可以被抽象
         AckCustomBody ackCustomBody = new AckCustomBody(request.getOpaque(), false);
         RemotingTransporter responseTransporter = RemotingTransporter.createResponseTransporter(GGprotocol.ACK, ackCustomBody, request.getOpaque());
-
         SubcribeResultCustomBody subcribeResultCustomBody = serializerImpl().readObject(request.bytes(), SubcribeResultCustomBody.class);
-
+        //++++++++++++++++++++++++++++++++++++++
         String serviceName = subcribeResultCustomBody.getServiceName();
 
         LoadBalanceStrategy balanceStrategy = subcribeResultCustomBody.getLoadBalanceStrategy();

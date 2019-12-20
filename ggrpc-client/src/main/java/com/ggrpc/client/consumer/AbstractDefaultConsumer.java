@@ -84,7 +84,7 @@ public abstract class AbstractDefaultConsumer implements Consumer{
     @Override
     public ChannelGroup loadBalance(String serviceName,LoadBalanceStrategy directBalanceStrategy) {
         LoadBalanceStrategy balanceStrategy = loadConcurrentHashMap.get(serviceName);
-
+        // 获取到已有连接channel中服务对应channellist
         CopyOnWriteArrayList<ChannelGroup> list = groups.get(serviceName);
         if(balanceStrategy == null){
 
