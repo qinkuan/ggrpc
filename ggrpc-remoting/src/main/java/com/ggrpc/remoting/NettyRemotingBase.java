@@ -7,7 +7,7 @@
 
 package com.ggrpc.remoting;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.utils.Pair;
@@ -29,8 +29,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static com.ggrpc.common.exception.protocal.GGprotocol.REQUEST_REMOTING;
-import static com.ggrpc.common.exception.protocal.GGprotocol.RESPONSE_REMOTING;
+import static com.ggrpc.common.protocal.GGprotocol.REQUEST_REMOTING;
+import static com.ggrpc.common.protocal.GGprotocol.RESPONSE_REMOTING;
 
 public abstract class NettyRemotingBase {
     private static final Logger logger = LoggerFactory.getLogger(NettyRemotingBase.class);
@@ -144,22 +144,27 @@ public abstract class NettyRemotingBase {
     }
 
     protected void processRemotingRequest(final ChannelHandlerContext ctx, final RemotingTransporter remotingTransporter) {
-
+        // 获取到对应的处理器和线程池
         final Pair<NettyRequestProcessor, ExecutorService> matchedPair = this.processorTable.get(remotingTransporter.getCode());
         final Pair<NettyRequestProcessor, ExecutorService> pair =
                 null == matchedPair ? this.defaultRequestProcessor : matchedPair;
+        //
         if (pair != null) {
-
+            // 构建处理请求的任务
             Runnable run = new Runnable() {
 
                 @Override
                 public void run() {
                     try {
                         RPCHook rpcHook = NettyRemotingBase.this.getRPCHook();
+                        // 前后置处理暂时没有用
                         if (rpcHook != null) {
                             rpcHook.doBeforeRequest(ConnectionUtils.parseChannelRemoteAddr(ctx.channel()), remotingTransporter);
                         }
+
                         final RemotingTransporter response = pair.getKey().processRequest(ctx, remotingTransporter);
+
+                        // 前后置处理暂时没有用
                         if (rpcHook != null) {
                             rpcHook.doAfterResponse(ConnectionUtils.parseChannelRemoteAddr(ctx.channel()),
                                     remotingTransporter, response);
@@ -177,6 +182,7 @@ public abstract class NettyRemotingBase {
                         }
                     } catch (Exception e) {
                         logger.error("processor occur exception [{}]",e.getMessage());
+                        // 出错了返回错误信息
                         final RemotingTransporter response = RemotingTransporter.newInstance(remotingTransporter.getOpaque(), GGprotocol.RESPONSE_REMOTING, GGprotocol.HANDLER_ERROR, null);
                         ctx.writeAndFlush(response);
                     }

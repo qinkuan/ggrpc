@@ -14,9 +14,9 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.ggrpc.common.exception.protocal.GGprotocol.CHANGE_LOADBALANCE;
-import static com.ggrpc.common.exception.protocal.GGprotocol.SUBCRIBE_RESULT;
-import static com.ggrpc.common.exception.protocal.GGprotocol.SUBCRIBE_SERVICE_CANCEL;
+import static com.ggrpc.common.protocal.GGprotocol.CHANGE_LOADBALANCE;
+import static com.ggrpc.common.protocal.GGprotocol.SUBCRIBE_RESULT;
+import static com.ggrpc.common.protocal.GGprotocol.SUBCRIBE_SERVICE_CANCEL;
 
 /**
  * 消费者端注册功能的主要处理逻辑

@@ -14,11 +14,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * 服务容器
  */
 public class DefaultServiceProviderContainer implements ServiceProviderContainer{
-
+    // 服务本地缓存
     private final ConcurrentMap<String, Pair<CurrentServiceState, ServiceWrapper>> serviceProviders = new ConcurrentHashMap<String, Pair<CurrentServiceState, ServiceWrapper>>();
 
     public void registerService(String uniqueKey, ServiceWrapper serviceWrapper) {
-
+        // 当前服务状态  服务编制类
         Pair<CurrentServiceState, ServiceWrapper> pair = new Pair<CurrentServiceState, ServiceWrapper>();
         pair.setKey(new CurrentServiceState());
         pair.setValue(serviceWrapper);

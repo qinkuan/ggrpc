@@ -5,7 +5,7 @@ import com.ggrpc.client.provider.DefaultProvider;
 import com.ggrpc.client.provider.DefaultServiceProviderContainer;
 import com.ggrpc.client.provider.flow.control.ServiceFlowControllerManager;
 import com.ggrpc.client.provider.model.ServiceWrapper;
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.transport.body.RequestCustomBody;
 import com.ggrpc.common.transport.body.ResponseCustomBody;
 import com.ggrpc.common.utils.Pair;

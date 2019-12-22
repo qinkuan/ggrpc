@@ -32,6 +32,7 @@ import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -46,6 +47,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import static com.ggrpc.common.utils.Constants.READER_IDLE_TIME_SECONDS;
 import static com.ggrpc.common.utils.Constants.WRITER_IDLE_TIME_SECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 // 客户端netty连接
@@ -89,6 +91,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
             writeBufferLowWaterMark = nettyClientConfig.getWriteBufferLowWaterMark();
             writeBufferHighWaterMark = nettyClientConfig.getWriteBufferHighWaterMark();
         }
+        // 对服务器配置参数进行初始化
         init();
     }
 
@@ -106,13 +109,14 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
                         return new Thread(r, "NettyClientWorkerThread_" + this.threadIndex.incrementAndGet());
                     }
                 });
+
         if (isNativeEt()) {
             bootstrap.channel(EpollSocketChannel.class);
         } else {
             bootstrap.channel(NioSocketChannel.class);
         }
 
-        // 重连狗
+        // 重连狗(重连处理器) 主要用于短线重连
         final ConnectionWatchdog watchdog = new ConnectionWatchdog(bootstrap, timer) {
 
             @Override
@@ -121,7 +125,8 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
                         this,
                         new RemotingTransporterDecoder(), //
                         new RemotingTransporterEncoder(), //
-                        new IdleStateChecker(timer, 0, WRITER_IDLE_TIME_SECONDS, 0),//
+                        //new IdleStateChecker(timer, 0, WRITER_IDLE_TIME_SECONDS, 0),//
+                        new IdleStateHandler(0,WRITER_IDLE_TIME_SECONDS,0, TimeUnit.SECONDS),
                         idleStateTrigger, new NettyClientHandler() };
             }
         };
@@ -137,6 +142,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
         });
     }
 
+    // 进行参数配置
     @Override
     public void init() {
         ThreadFactory workerFactory = new DefaultThreadFactory("netty.client");
@@ -175,7 +181,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
 
         return this.createChannel(addr);
     }
-    // 开启连接
+    // 创建一个连接
     public Channel createChannel(String addr) throws InterruptedException {
 
         ChannelWrapper cw = this.channelTables.get(addr);
@@ -206,6 +212,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
                 // 注意这边的bootstrap在MQClientInstance.java中的this.mQClientAPIImpl.start()的这个方法初始化过，这边只需要connect一下就可以连接了
                 if (createNewConnection) {
                     ChannelFuture channelFuture = this.bootstrap.connect(ConnectionUtils.string2SocketAddress(addr));
+                    System.out.println("我在这里连接到注册中心拉啊啊啊啊啊啊");
                     logger.info("createChannel: begin to connect remote host[{}] asynchronously", addr);
                     // 将返回的Netty对象的ChannelFuture对象编织成一个cw
                     cw = new ChannelWrapper(channelFuture);
@@ -261,16 +268,18 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
         }
         return true;
     }
-
+    // 客户端handler
     class NettyClientHandler extends SimpleChannelInboundHandler<RemotingTransporter> {
 
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingTransporter msg) throws Exception {
+            // 对数据进行处理
             processMessageReceived(ctx, msg);
         }
 
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+            // channleInactive
             processChannelInactive(ctx);
         }
     }
@@ -325,7 +334,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
 
     @Override
     public RemotingTransporter invokeSync(String addr, RemotingTransporter request, long timeoutMillis) throws InterruptedException, RemotingException {
-
+        // 获取到指定的channel,如果没有则创建
         final Channel channel = this.getAndCreateChannel(addr);
         if (channel != null && channel.isActive()) {
             try {

@@ -7,7 +7,7 @@
 
 package com.ggrpc.client.consumer;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.rpc.RegisterMeta;
 import com.ggrpc.common.utils.ChannelGroup;
 import com.ggrpc.common.utils.JUnsafe;
@@ -34,13 +34,19 @@ import static java.util.concurrent.TimeUnit.MILLISECONDS;
  */
 public abstract class DefaultConsumer extends AbstractDefaultConsumer{
     private static final Logger logger = LoggerFactory.getLogger(DefaultConsumer.class);
-
+    // 注册中心的配置
     private NettyClientConfig registryClientConfig;
+    // 直连默认provider的配置
     private NettyClientConfig providerClientConfig;
+    // 自己作为消费者的配置
     private ConsumerConfig consumerConfig;
+    // 与注册中心连接的netty客户端
     protected NettyRemotingClient registryNettyRemotingClient;
+    // 与provider连接的客户端
     protected NettyRemotingClient providerNettyRemotingClient;
+    // 消费者注册处理功能
     private DefaultConsumerRegistry defaultConsumerRegistry;
+    // 消费者管理
     private ConsumerManager consumerManager;
     private Channel registyChannel;
     public DefaultConsumer(NettyClientConfig registryClientConfig, NettyClientConfig providerClientConfig, ConsumerConfig consumerConfig) {
@@ -60,14 +66,17 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
             // 注册处理器
             this.registerProcessor();
         }
-
+        // 作为连接provider的客户端
         this.providerNettyRemotingClient = new NettyRemotingClient(this.providerClientConfig);
 
     }
 
     private void registerProcessor() {
+        // 订阅结果处理器
         this.registryNettyRemotingClient.registerProcessor(GGprotocol.SUBCRIBE_RESULT, new DefaultConsumerRegistryProcessor(this), null);
+        // 订阅取消处理器
         this.registryNettyRemotingClient.registerProcessor(GGprotocol.SUBCRIBE_SERVICE_CANCEL, new DefaultConsumerRegistryProcessor(this), null);
+        // 修改负载均衡策略处理器
         this.registryNettyRemotingClient.registerProcessor(GGprotocol.CHANGE_LOADBALANCE, new DefaultConsumerRegistryProcessor(this), null);
     }
     // 订阅服务
@@ -83,7 +92,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
             @Override
             public void start() {
                 subcribeService(service, new NotifyListener() {
-
+                    // 订阅服务监听器
                     @Override
                     public void notify(RegisterMeta registerMeta, NotifyEvent event) {
 
@@ -106,9 +115,10 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
                                     try {
                                         // 所有的consumer与provider之间的链接不进行短线重连操作
                                         DefaultConsumer.this.getProviderNettyRemotingClient().setreconnect(false);
+                                        // Consumer订阅成功后连接Provider
                                         DefaultConsumer.this.getProviderNettyRemotingClient().getBootstrap()
                                                 .connect(ConnectionUtils.string2SocketAddress(remoteHost + ":" + remotePort)).addListener(new ChannelFutureListener() {
-
+                                            // 完成监听器
                                             @Override
                                             public void operationComplete(ChannelFuture future) throws Exception {
                                                 group.add(future.channel());

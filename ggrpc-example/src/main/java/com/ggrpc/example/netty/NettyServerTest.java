@@ -1,6 +1,6 @@
 package com.ggrpc.example.netty;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.remoting.model.NettyRequestProcessor;
 import com.ggrpc.remoting.model.RemotingTransporter;
 import com.ggrpc.remoting.netty.NettyRemotingServer;

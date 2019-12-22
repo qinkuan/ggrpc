@@ -1,6 +1,6 @@
 package com.ggrpc.remoting.netty.decode;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingContextException;
 import com.ggrpc.remoting.model.RemotingTransporter;
 import io.netty.buffer.ByteBuf;
@@ -12,7 +12,7 @@ import org.xerial.snappy.Snappy;
 
 import java.util.List;
 
-import static com.ggrpc.common.exception.protocal.GGprotocol.MAGIC;
+import static com.ggrpc.common.protocal.GGprotocol.MAGIC;
 
 public class RemotingTransporterDecoder extends ReplayingDecoder<RemotingTransporterDecoder.State> {
 	

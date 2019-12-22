@@ -10,9 +10,9 @@ package com.ggrpc.remoting.model;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 
-import static com.ggrpc.common.exception.protocal.GGprotocol.HEAD_LENGTH;
-import static com.ggrpc.common.exception.protocal.GGprotocol.HEARTBEAT;
-import static com.ggrpc.common.exception.protocal.GGprotocol.MAGIC;
+import static com.ggrpc.common.protocal.GGprotocol.HEAD_LENGTH;
+import static com.ggrpc.common.protocal.GGprotocol.HEARTBEAT;
+import static com.ggrpc.common.protocal.GGprotocol.MAGIC;
 
 public class Heartbeats {
     private static final ByteBuf HEARTBEAT_BUF;

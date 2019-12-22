@@ -1,6 +1,6 @@
 package com.ggrpc.base.registry;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.loadbalance.LoadBalanceStrategy;

@@ -5,7 +5,7 @@ import com.ggrpc.client.interceptor.ProviderProxyHandler;
 import com.ggrpc.client.provider.Controller.ProviderRegistryController;
 import com.ggrpc.client.provider.flow.control.ServiceFlowControllerManager;
 import com.ggrpc.client.provider.model.ServiceWrapper;
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.rpc.RpcWrapperException;
 import com.ggrpc.common.transport.body.PublishServiceCustomBody;
 import com.ggrpc.remoting.model.RemotingTransporter;
@@ -54,9 +54,9 @@ public class LocalServerWrapperManager {
 
                 //默认的编织对象
                 DefaultServiceWrapper defaultServiceWrapper = new DefaultServiceWrapper();
-
+                // 获取到所有服务对线的编织
                 List<ServiceWrapper> serviceWrappers = defaultServiceWrapper.provider(o).create();
-
+                // 构造发布请求
                 if(null != serviceWrappers  && !serviceWrappers.isEmpty()){
                     for(ServiceWrapper serviceWrapper : serviceWrappers){
 
@@ -124,7 +124,7 @@ public class LocalServerWrapperManager {
         @Override
         public List<ServiceWrapper> create() {
 
-            List<ServiceWrapper> serviceWrappers = new ArrayList<ServiceWrapper>();
+            List<ServiceWrapper> serviceWrappers = new ArrayList<>();
 
             //读取对象的方法注解
             RPCService rpcService = null;
@@ -134,6 +134,7 @@ public class LocalServerWrapperManager {
                 if(null != methods && methods.length > 0){
 
                     for(Method method :methods){
+                        // 读取注解里的属性
                         rpcService = method.getAnnotation(RPCService.class);
                         if(null != rpcService){
 
@@ -160,7 +161,7 @@ public class LocalServerWrapperManager {
                             if(maxCallCount <= 0){
                                 throw new RpcWrapperException("max call count must over zero at unit time");
                             }
-                            // 把服务名称注册到管理器上
+                            // 把服务名称注册到限流管理器上
                             ServiceFlowControllerManager serviceFlowControllerManager = providerController.getServiceFlowControllerManager();
                             serviceFlowControllerManager.setServiceLimitVal(serviceName, maxCallCount);
                             //如果是支持服务降级服务，则需要根据降级方法的路径去创建这个实例，并编制proxy

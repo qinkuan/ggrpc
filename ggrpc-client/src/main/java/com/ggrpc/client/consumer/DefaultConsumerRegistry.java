@@ -7,7 +7,7 @@
 
 package com.ggrpc.client.consumer;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.transport.body.SubscribeRequestCustomBody;
@@ -52,8 +52,9 @@ public class DefaultConsumerRegistry {
 
             RemotingTransporter remotingTransporter = RemotingTransporter.createRequestTransporter(GGprotocol.SUBSCRIBE_SERVICE, body);
             try {
-
+                // 向注册中心发送注册消息
                 RemotingTransporter registryResponse = sendKernelSubscribeInfo(this.defaultConsumer.getRegistyChannel(), remotingTransporter, timeout);
+                // 处理注册响应
                 RemotingTransporter ackTransporter = this.defaultConsumer.getConsumerManager().handlerSubcribeResult(registryResponse,
                         this.defaultConsumer.getRegistyChannel());
                 this.defaultConsumer.getRegistyChannel().writeAndFlush(ackTransporter);

@@ -18,7 +18,7 @@ public class NettyClientConfig {
     private long channelNotActiveInterval = 1000 * 60;
 
     // format host:port,host:port
-    // 默认地址
+    // 默认注册中心的地址
     private String defaultAddress;
     // 最大空闲时间
     private int clientChannelMaxIdleTimeSeconds = 120;

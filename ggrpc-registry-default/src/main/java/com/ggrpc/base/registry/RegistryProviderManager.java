@@ -3,7 +3,7 @@ package com.ggrpc.base.registry;
 import com.alibaba.fastjson.JSON;
 import com.ggrpc.base.registry.model.RegistryPersistRecord;
 import com.ggrpc.base.registry.model.RegistryPersistRecord.PersistProviderInfo;
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.loadbalance.LoadBalanceStrategy;
@@ -39,7 +39,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
 
     private DefaultRegistryServer defaultRegistryServer;
 
-    // 某个服务
+    // 某个服务和注册主机信息
     private final ConcurrentMap<String, ConcurrentMap<Address, RegisterMeta>> globalRegisterInfoMap = new ConcurrentHashMap<String, ConcurrentMap<Address, RegisterMeta>>();
     // 指定节点都注册了哪些服务
     private final ConcurrentMap<Address, ConcurrentSet<String>> globalServiceMetaMap = new ConcurrentHashMap<RegisterMeta.Address, ConcurrentSet<String>>();
@@ -47,7 +47,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
     private final ConcurrentMap<String, ConcurrentSet<Channel>> globalConsumerMetaMap = new ConcurrentHashMap<String, ConcurrentSet<Channel>>();
     // 提供者某个地址对应的channel
     private final ConcurrentMap<Address, Channel> globalProviderChannelMetaMap = new ConcurrentHashMap<RegisterMeta.Address, Channel>();
-    //每个服务的历史记录
+    //每个服务的历史注册记录
     private final ConcurrentMap<String, RegistryPersistRecord> historyRecords = new ConcurrentHashMap<String, RegistryPersistRecord>();
     //每个服务对应的负载策略
     private final ConcurrentMap<String, LoadBalanceStrategy> globalServiceLoadBalance = new ConcurrentHashMap<String, LoadBalanceStrategy>();
@@ -55,6 +55,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
     public RegistryProviderManager(DefaultRegistryServer defaultRegistryServer) {
         this.defaultRegistryServer = defaultRegistryServer;
     }
+
 
     public RemotingTransporter handleManager(RemotingTransporter request, Channel channel) throws RemotingSendRequestException, RemotingTimeoutException,
             InterruptedException {
@@ -672,10 +673,13 @@ public class RegistryProviderManager implements RegistryProviderServer {
      * @throws IOException
      */
     public void persistServiceInfo() throws IOException {
-
+        // 最新的刷盘存储信息
         Map<String,RegistryPersistRecord> persistMap = new HashMap<>();
+        // K 服务名 V不同的主机注册信息 最后一次启动到现在的服务注册信息
         ConcurrentMap<String, ConcurrentMap<Address, RegisterMeta>> _globalRegisterInfoMap = this.globalRegisterInfoMap; //_stack copy
+        // 每个服务对应的负载均衡策略
         ConcurrentMap<String, LoadBalanceStrategy> _globalServiceLoadBalance = this.globalServiceLoadBalance; //_stack copy
+        // 服务的历史记录
         ConcurrentMap<String, RegistryPersistRecord> _historyRecords = this.historyRecords;
 
         //globalRegisterInfoMap 中保存
@@ -685,9 +689,11 @@ public class RegistryProviderManager implements RegistryProviderServer {
 
                 RegistryPersistRecord persistRecord = new RegistryPersistRecord();
                 persistRecord.setServiceName(serviceName);
+                // 获取当前某服务的负载均衡策略
                 persistRecord.setBalanceStrategy(_globalServiceLoadBalance.get(serviceName));
 
                 List<PersistProviderInfo> providerInfos = new ArrayList<PersistProviderInfo>();
+                // 将当前某服务的所有注册主机信息保存到 persistMap
                 ConcurrentMap<Address, RegisterMeta> serviceMap = _globalRegisterInfoMap.get(serviceName);
                 for(Address address : serviceMap.keySet()){
                     PersistProviderInfo info = new PersistProviderInfo();
@@ -700,12 +706,12 @@ public class RegistryProviderManager implements RegistryProviderServer {
             }
         }
 
-
+        // 将之前的注册信息与现在合并，因为服务重启过
         if(null != _historyRecords.keySet()){
 
             for(String serviceName :_historyRecords.keySet()){
 
-                //不包含的时候
+                //不包含的时候 将历史记录添加
                 if(!persistMap.keySet().contains(serviceName)){
                     persistMap.put(serviceName, _historyRecords.get(serviceName));
                 }else{
@@ -713,12 +719,13 @@ public class RegistryProviderManager implements RegistryProviderServer {
                     //负载策略不需要合并更新，需要更新的是existRecord中没有的provider的信息
                     List<PersistProviderInfo> providerInfos = new ArrayList<PersistProviderInfo>();
                     RegistryPersistRecord existRecord = persistMap.get(serviceName);
+                    // 包含的时候，将当前各provider的信息合并
                     providerInfos.addAll(existRecord.getProviderInfos());
 
                     //可能需要合并的信息，合并原则，如果同地址的审核策略以globalRegisterInfoMap为准，如果不同地址，则合并信息
                     RegistryPersistRecord possibleMergeRecord = _historyRecords.get(serviceName);
                     List<PersistProviderInfo> possibleProviderInfos = possibleMergeRecord.getProviderInfos();
-
+                    // 如果当前服务主机信息中，历史也存在，则跳过，否则，加入到服务主机信息中
                     for(PersistProviderInfo eachPossibleInfo : possibleProviderInfos){
 
                         Address address = eachPossibleInfo.getAddress();
@@ -738,7 +745,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
                     persistMap.put(serviceName, existRecord);
                 }
             }
-
+            // 如果存在信息则，刷盘，存入硬盘中
             if(null != persistMap.values() && !persistMap.values().isEmpty()){
 
                 String jsonString = JSON.toJSONString(persistMap.values());

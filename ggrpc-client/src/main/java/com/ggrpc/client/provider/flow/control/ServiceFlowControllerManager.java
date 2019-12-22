@@ -61,9 +61,10 @@ public class ServiceFlowControllerManager {
         ServiceFlowController serviceFlowController = pair.getValue();
         Long maxCallCount = pair.getKey();
 
-        long hasCallCount = serviceFlowController.getCurrentCallCountAtLastMinute();
-
-        return hasCallCount > maxCallCount ? false :true;
+        long hasCallCount = serviceFlowController.incrementAtCurrentMinute();
+        System.out.println("当前已调用:"+hasCallCount+"次");
+        System.out.println("最大调用次数"+maxCallCount);
+        return hasCallCount <= maxCallCount;
 
     }
 

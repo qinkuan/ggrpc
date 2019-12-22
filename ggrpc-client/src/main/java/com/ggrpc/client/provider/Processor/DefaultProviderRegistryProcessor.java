@@ -8,8 +8,8 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.ggrpc.common.exception.protocal.GGprotocol.AUTO_DEGRADE_SERVICE;
-import static com.ggrpc.common.exception.protocal.GGprotocol.DEGRADE_SERVICE;
+import static com.ggrpc.common.protocal.GGprotocol.AUTO_DEGRADE_SERVICE;
+import static com.ggrpc.common.protocal.GGprotocol.DEGRADE_SERVICE;
 
 /**
  * 降级provider端注册的处理器

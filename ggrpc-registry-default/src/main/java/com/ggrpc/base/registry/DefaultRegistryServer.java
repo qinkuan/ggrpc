@@ -57,18 +57,20 @@ public class DefaultRegistryServer implements RegistryServer {
     public DefaultRegistryServer(NettyServerConfig nettyServerConfig,RegistryServerConfig registryServerConfig) {
         this.nettyServerConfig = nettyServerConfig;
         this.registryServerConfig = registryServerConfig;
+        // 将注册服务器分别挂载到消费者和提供者管理器
         consumerManager = new RegistryConsumerManager(this);
         providerManager = new RegistryProviderManager(this);
+        // 初始化注册服务器
         initialize();
     }
 
     private void initialize() {
-
+        // 获取一个netty服务进程
         this.remotingServer = new NettyRemotingServer(this.nettyServerConfig);
-
+        // 事件处理线程池
         this.remotingExecutor =
                 Executors.newFixedThreadPool(nettyServerConfig.getServerWorkerThreads(), new NamedThreadFactory("RegistryCenterExecutorThread_"));
-
+        // 短线处理线程池
         this.remotingChannelInactiveExecutor =
                 Executors.newFixedThreadPool(nettyServerConfig.getChannelInactiveHandlerThreads(), new NamedThreadFactory("RegistryCenterChannelInActiveExecutorThread_"));
 
@@ -77,7 +79,7 @@ public class DefaultRegistryServer implements RegistryServer {
 
         //从硬盘上恢复一些服务的信息
         this.recoverServiceInfoFromDisk();
-
+        // 定时将发送失败的消息每隔60秒发送一次给消费者
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -90,7 +92,7 @@ public class DefaultRegistryServer implements RegistryServer {
                 }
             }
         }, 60, 60, TimeUnit.SECONDS);
-
+        // 每隔30秒对提供者进行持久化
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -106,7 +108,7 @@ public class DefaultRegistryServer implements RegistryServer {
     }
 
     /**
-     * 从硬盘上恢复一些服务的审核负载算法的信息
+     * 从硬盘上恢复一些服务的审核负载算法的信息，将其添加到历史注册记录 historyRecords 中
      */
     private void recoverServiceInfoFromDisk() {
 
@@ -128,7 +130,9 @@ public class DefaultRegistryServer implements RegistryServer {
     }
 
     private void registerProcessor() {
+        // 时间处理
         this.remotingServer.registerDefaultProcessor(new DefaultRegistryProcessor(this), this.remotingExecutor);
+        // 短线处理
         this.remotingServer.registerChannelInactiveProcessor(new DefaultRegistryChannelInactiveProcessor(this), remotingChannelInactiveExecutor);
     }
 

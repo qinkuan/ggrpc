@@ -6,12 +6,12 @@ import com.ggrpc.common.rpc.ServiceReviewState;
 
 import java.util.ArrayList;
 import java.util.List;
-
+// 注册持久化记录
 public class RegistryPersistRecord {
 
-
+    // 服务名称
     private String serviceName;
-
+    // 负载均衡策略
     private LoadBalanceStrategy balanceStrategy;
 
     private List<PersistProviderInfo> providerInfos = new ArrayList<PersistProviderInfo>();
@@ -43,11 +43,11 @@ public class RegistryPersistRecord {
         this.providerInfos = providerInfos;
     }
 
-
+    // 持久化服务提供者信息
     public static class PersistProviderInfo {
-
+        // 地址信息
         private Address address;
-
+        // 是否通过审核
         private ServiceReviewState isReviewed = ServiceReviewState.PASS_REVIEW;
 
         public PersistProviderInfo() {

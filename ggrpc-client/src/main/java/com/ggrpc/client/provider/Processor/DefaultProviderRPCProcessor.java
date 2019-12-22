@@ -8,7 +8,7 @@ import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static com.ggrpc.common.exception.protocal.GGprotocol.RPC_REQUEST;
+import static com.ggrpc.common.protocal.GGprotocol.RPC_REQUEST;
 
 public class DefaultProviderRPCProcessor implements NettyRequestProcessor {
     private static final Logger logger = LoggerFactory.getLogger(DefaultProviderRPCProcessor.class);

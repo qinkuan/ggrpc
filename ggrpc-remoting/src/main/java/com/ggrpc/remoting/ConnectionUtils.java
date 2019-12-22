@@ -7,7 +7,8 @@
 
 package com.ggrpc.remoting;
 
-import com.ggrpc.common.rpc.Address;
+import com.ggrpc.common.rpc.RegisterMeta.*;
+import com.ggrpc.common.rpc.RegisterMeta;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
@@ -38,7 +39,7 @@ public class ConnectionUtils {
         return "";
     }
 
-    public static Address parseChannelRemoteAddress(final Channel channel) {
+    public static RegisterMeta.Address parseChannelRemoteAddress(final Channel channel) {
         String address = parseChannelRemoteAddr(channel);
         if("".equals(address)){
             return null;

@@ -7,7 +7,7 @@
 
 package com.ggrpc.client.consumer;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.loadbalance.LoadBalanceStrategy;
 import com.ggrpc.common.rpc.RegisterMeta;
 import com.ggrpc.common.transport.body.AckCustomBody;
@@ -35,7 +35,7 @@ public class ConsumerManager {
     private DefaultConsumer defaultConsumer; //consumer模块的代码手持defaultConsumer好办事
     // 读写锁用于更新本地注册列表
     private final ReentrantReadWriteLock registriesLock = new ReentrantReadWriteLock();
-    // 本地注册信息
+    // 本地存储注册信息
     private final Map<String, List<RegisterMeta>> registries = new ConcurrentHashMap<>();
     public ConsumerManager(DefaultConsumer defaultConsumer) {
         this.defaultConsumer = defaultConsumer;

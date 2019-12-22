@@ -6,7 +6,7 @@ import com.ggrpc.remoting.model.RemotingTransporter;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static com.ggrpc.common.exception.protocal.GGprotocol.*;
+import static com.ggrpc.common.protocal.GGprotocol.*;
 
 
 /**

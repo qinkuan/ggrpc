@@ -30,6 +30,7 @@ import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.concurrent.DefaultEventExecutorGroup;
 import io.netty.util.concurrent.DefaultThreadFactory;
@@ -41,6 +42,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.ggrpc.common.utils.Constants.AVAILABLE_PROCESSORS;
@@ -63,7 +65,7 @@ public class NettyRemotingServer extends NettyRemotingBase implements RemotingSe
     protected volatile ByteBufAllocator allocator;
 
     private final NettyServerConfig nettyServerConfig;
-
+    // 默认时间处理线程池
     private DefaultEventExecutorGroup defaultEventExecutorGroup;
 
     private final ExecutorService publicExecutor;
@@ -153,18 +155,25 @@ public class NettyRemotingServer extends NettyRemotingBase implements RemotingSe
                 return new Thread(r, "NettyServerWorkerThread_" + this.threadIndex.incrementAndGet());
             }
         });
+        // 判断操作系统，选择不同的Serversocket  其实就是epoll和select
         if (isNativeEt()) {
             serverBootstrap.channel(EpollServerSocketChannel.class);
         } else {
             serverBootstrap.channel(NioServerSocketChannel.class);
         }
-        serverBootstrap.localAddress(new InetSocketAddress(this.nettyServerConfig.getListenPort())).childHandler(new ChannelInitializer<SocketChannel>() {
+        // 配置ip 端口地址
+        serverBootstrap.localAddress(new InetSocketAddress(this.nettyServerConfig.getListenPort()));
+        serverBootstrap.childHandler(new ChannelInitializer<SocketChannel>() {
 
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ch.pipeline().addLast(
+                        // 时间处理线程组
                         defaultEventExecutorGroup,
-                        new IdleStateChecker(timer, READER_IDLE_TIME_SECONDS, 0, 0),
+                        // 自己的链路空闲链路检测
+                        //new IdleStateChecker(timer, READER_IDLE_TIME_SECONDS, 0, 0),
+                        // netty链路检测
+                        new IdleStateHandler(READER_IDLE_TIME_SECONDS,0,0, TimeUnit.SECONDS),
                         idleStateTrigger,
                         new RemotingTransporterDecoder()
                         ,new RemotingTransporterEncoder()
@@ -268,12 +277,12 @@ public class NettyRemotingServer extends NettyRemotingBase implements RemotingSe
     }
 
     class NettyServerHandler extends SimpleChannelInboundHandler<RemotingTransporter> {
-
+        // 事件处理
         @Override
         protected void channelRead0(ChannelHandlerContext ctx, RemotingTransporter msg) throws Exception {
             processMessageReceived(ctx, msg);
         }
-
+        // 断线处理
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             processChannelInactive(ctx);

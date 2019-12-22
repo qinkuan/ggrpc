@@ -57,7 +57,7 @@ public class RegistryController {
             for (String eachAddress : addresses) {
 
                 for (RemotingTransporter request : transporters) {
-
+                    // 向指定的注册中心发布服务
                     pushPublishServiceToRegistry(request,eachAddress);
 
                 }
@@ -67,6 +67,7 @@ public class RegistryController {
 
     private void pushPublishServiceToRegistry(RemotingTransporter request, String eachAddress) throws InterruptedException, RemotingException {
         logger.info("[{}] transporters matched", request);
+        // 先假设没返回，悲观主义
         messagesNonAcks.put(request.getOpaque(), new MessageNonAck(request, eachAddress));
         RemotingTransporter remotingTransporter = defaultProvider.getNettyRemotingClient().invokeSync(eachAddress, request, 3000);
         if(null != remotingTransporter){

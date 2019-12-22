@@ -7,7 +7,7 @@
 
 package com.ggrpc.remoting.netty.encode;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.serialization.SerializerHolder;
 import com.ggrpc.remoting.model.RemotingTransporter;
 import io.netty.buffer.ByteBuf;

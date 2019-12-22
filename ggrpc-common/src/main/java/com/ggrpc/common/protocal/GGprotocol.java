@@ -1,4 +1,4 @@
-package com.ggrpc.common.exception.protocal;
+package com.ggrpc.common.protocal;
 
 
 public class GGprotocol {
@@ -26,7 +26,7 @@ public class GGprotocol {
     public static final byte PUBLISH_SERVICE = 65;
     //consumer端向registry订阅服务后返回的订阅结果
   	public static final byte SUBCRIBE_RESULT = 66;
-  	//订阅服务取消
+  	//订阅的服务取消
   	public static final byte SUBCRIBE_SERVICE_CANCEL = 67;
   	//取消发布服务
   	public static final byte PUBLISH_CANCEL_SERVICE = 68;

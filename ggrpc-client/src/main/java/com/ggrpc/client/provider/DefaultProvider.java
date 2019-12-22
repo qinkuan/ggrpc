@@ -6,7 +6,7 @@ import com.ggrpc.client.provider.Processor.DefaultProviderInactiveProcessor;
 import com.ggrpc.client.provider.Processor.DefaultProviderRPCProcessor;
 import com.ggrpc.client.provider.Processor.DefaultProviderRegistryProcessor;
 import com.ggrpc.client.provider.model.ServiceWrapper;
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingException;
 import com.ggrpc.common.transport.body.AckCustomBody;
 import com.ggrpc.common.transport.body.ManagerServiceCustomBody;
@@ -42,7 +42,7 @@ public class DefaultProvider implements Provider{
     private Channel monitorChannel; 					  // 连接monitor端的channel
     /********* 要发布的服务的信息 ***********/
     private List<RemotingTransporter> publishRemotingTransporters;
-    /************ 全局发布的信息 ************/
+    /************ 全局的发布信息 ************/
     private ConcurrentMap<String, PublishServiceCustomBody> globalPublishService = new ConcurrentHashMap<String, PublishServiceCustomBody>();
     /***** 注册中心的地址 ******/
     private String registryAddress;
@@ -84,6 +84,7 @@ public class DefaultProvider implements Provider{
         this.nettyRemotingVipServer = new NettyRemotingServer(this.serverConfig);
 
         this.remotingExecutor = Executors.newFixedThreadPool(serverConfig.getServerWorkerThreads(), new NamedThreadFactory("providerExecutorThread_"));
+        // VIP线程池
         this.remotingVipExecutor = Executors.newFixedThreadPool(serverConfig.getServerWorkerThreads() / 2, new NamedThreadFactory("providerExecutorThread_"));
         // 注册处理器
         this.registerProcessor();
@@ -214,7 +215,7 @@ public class DefaultProvider implements Provider{
         this.monitorAddress = monitorAddress;
         return this;
     }
-
+    // 启动provider
     @Override
     public void start() throws InterruptedException, RemotingException {
 

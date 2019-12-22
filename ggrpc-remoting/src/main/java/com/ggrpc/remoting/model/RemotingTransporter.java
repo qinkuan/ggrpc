@@ -8,7 +8,7 @@
 package com.ggrpc.remoting.model;
 
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.transport.body.CommonCustomBody;
 
 import java.util.concurrent.atomic.AtomicLong;

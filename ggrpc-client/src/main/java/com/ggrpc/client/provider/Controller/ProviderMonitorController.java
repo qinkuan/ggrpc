@@ -3,7 +3,7 @@ package com.ggrpc.client.provider.Controller;
 import com.ggrpc.client.metrics.Meter;
 import com.ggrpc.client.metrics.ServiceMeterManager;
 import com.ggrpc.client.provider.DefaultProvider;
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.rpc.MetricsReporter;
 import com.ggrpc.common.transport.body.ProviderMetricsCustomBody;
 import com.ggrpc.common.transport.body.PublishServiceCustomBody;

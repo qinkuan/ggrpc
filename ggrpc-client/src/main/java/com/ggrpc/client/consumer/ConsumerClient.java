@@ -7,7 +7,7 @@
 
 package com.ggrpc.client.consumer;
 
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.exception.rpc.NoServiceException;
@@ -17,9 +17,7 @@ import com.ggrpc.common.utils.ChannelGroup;
 import com.ggrpc.remoting.model.RemotingTransporter;
 import com.ggrpc.remoting.netty.NettyClientConfig;
 import io.netty.channel.Channel;
-import net.sf.cglib.core.CollectionUtils;
 
-import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -57,6 +55,7 @@ public class ConsumerClient extends DefaultConsumer{
         if (null == serviceName || serviceName.length() == 0) {
             throw new NoServiceException("调用的服务名不能为空");
         }
+        // 按负载均衡策略返回
         ChannelGroup channelGroup = getAllMatchedChannel(serviceName);
         if (channelGroup == null || channelGroup.size() == 0) {
             throw new NoServiceException("没有第三方提供该服务，请检查服务名");

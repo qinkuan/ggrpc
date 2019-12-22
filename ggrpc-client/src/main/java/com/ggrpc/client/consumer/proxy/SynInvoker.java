@@ -9,7 +9,7 @@ package com.ggrpc.client.consumer.proxy;
 
 import com.ggrpc.client.annotation.RPCConsumer;
 import com.ggrpc.client.consumer.Consumer;
-import com.ggrpc.common.exception.protocal.GGprotocol;
+import com.ggrpc.common.protocal.GGprotocol;
 import com.ggrpc.common.exception.remoting.RemotingSendRequestException;
 import com.ggrpc.common.exception.remoting.RemotingTimeoutException;
 import com.ggrpc.common.exception.rpc.NoServiceException;

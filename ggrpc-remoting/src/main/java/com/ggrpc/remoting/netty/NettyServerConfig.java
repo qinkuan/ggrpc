@@ -11,11 +11,15 @@ import static com.ggrpc.common.utils.Constants.AVAILABLE_PROCESSORS;
 
 public class NettyServerConfig implements Cloneable{
     private int listenPort = 8888;
+    // 可用CPU*2
     private int serverWorkerThreads = AVAILABLE_PROCESSORS << 1;
+    // 通道失活处理线程
     private int channelInactiveHandlerThreads = 1;
+    // TCP发送缓存
     private int serverSocketSndBufSize = -1;
+    // 接受缓存区
     private int serverSocketRcvBufSize = -1;
-
+    //
     private int writeBufferLowWaterMark = -1;
     private int writeBufferHighWaterMark = -1;
 
