@@ -4,6 +4,9 @@ package com.ggrpc.base.registry.model;
  * 某个服务对应的审核记录
  */
 public class ReviewRecord {
+    /**
+     * 是否审核通过
+     */
     private boolean isReviewPass;
 
     /**

@@ -263,7 +263,7 @@ public class DefaultProvider implements Provider{
 
         if (null != list && !list.isEmpty()) {
             for (RemotingTransporter remotingTransporter : list) {
-                PublishServiceCustomBody customBody = (PublishServiceCustomBody) remotingTransporter.getCustomHeader();
+                PublishServiceCustomBody customBody = (PublishServiceCustomBody) remotingTransporter.getCustomBody();
                 String serviceName = customBody.getServiceProviderName();
                 this.globalPublishService.put(serviceName, customBody);
             }
@@ -301,7 +301,7 @@ public class DefaultProvider implements Provider{
 
         for (RemotingTransporter eachTransporter : publishRemotingTransporters) {
 
-            PublishServiceCustomBody body = (PublishServiceCustomBody) eachTransporter.getCustomHeader();
+            PublishServiceCustomBody body = (PublishServiceCustomBody) eachTransporter.getCustomBody();
             if (body.getServiceProviderName().equals(serviceName) && body.isSupportDegradeService()) {
                 checkSerivceIsExist = true;
                 break;

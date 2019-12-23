@@ -12,6 +12,9 @@ public class HelloServiceBenchmark implements HelloService {
 	isFlowController = false,
 	degradeServiceDesc="默认返回hello")
 	public String sayHello(String str) {
+		for(int i = 0;i<20000;i++){
+			i++;
+		}
 		return str;
 	}
 	

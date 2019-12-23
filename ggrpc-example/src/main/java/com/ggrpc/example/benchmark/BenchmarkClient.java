@@ -24,7 +24,19 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BenchmarkClient {
 	
 	private static final Logger logger = LoggerFactory.getLogger(BenchmarkClient.class);
-	
+	static String s = "顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶" +
+			"顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶顶assa"
+			;
 	public static void main(String[] args) throws Exception {
 		
 		int processors = Runtime.getRuntime().availableProcessors();
@@ -50,7 +62,7 @@ public class BenchmarkClient {
 			String str = helloService.sayHello("Lyncc");
 			System.out.println(str);
 		}
-		final int t = 500;
+		final int t = 5000;
 		final int step = 3;
 		long start = System.currentTimeMillis();
 		final CountDownLatch latch = new CountDownLatch(processors << step);
@@ -62,7 +74,7 @@ public class BenchmarkClient {
 				public void run() {
 					for (int i = 0; i < t; i++) {
 						try {
-							helloService.sayHello("Lyncc");
+							helloService.sayHello(s);
 
 							if (count.getAndIncrement() % 10000 == 0) {
 								logger.warn("count=" + count.get());

@@ -13,18 +13,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
- * @author BazingaLyn
+ *  provider断线处理
  * @description 当provider发生异常的时候注册中心需要做的处理
- * @time 2016年8月15日
- * @modifytime
  */
 public class DefaultRegistryChannelInactiveProcessor implements NettyChannelInactiveProcessor {
 	
 	private static final Logger logger = LoggerFactory.getLogger(DefaultRegistryChannelInactiveProcessor.class);
 	
 	private DefaultRegistryServer defaultRegistryServer;
-	
+	// 常量池获取发布的服务
 	private static final AttributeKey<ConcurrentSet<RegisterMeta>> S_PUBLISH_KEY = AttributeKey.valueOf("server.published");
 
 	public DefaultRegistryChannelInactiveProcessor(DefaultRegistryServer defaultRegistryServer) {
@@ -53,6 +50,7 @@ public class DefaultRegistryChannelInactiveProcessor implements NettyChannelInac
             if (address == null) {
                 address = meta.getAddress();
             }
+            // 通知订阅者服务下线
             this.defaultRegistryServer.getProviderManager().handlePublishCancel(meta, channel);
         }
 	}

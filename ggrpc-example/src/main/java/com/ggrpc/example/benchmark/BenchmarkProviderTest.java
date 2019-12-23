@@ -14,7 +14,7 @@ import com.ggrpc.remoting.netty.NettyServerConfig;
  * @time
  * @modifytime
  */
-public class BenchmarkProviderTest {
+public class   BenchmarkProviderTest {
 
 	public static void main(String[] args) throws InterruptedException, RemotingException {
 

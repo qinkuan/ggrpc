@@ -13,7 +13,7 @@ public class RegistryPersistRecord {
     private String serviceName;
     // 负载均衡策略
     private LoadBalanceStrategy balanceStrategy;
-
+    // 所有服务提供者的信息
     private List<PersistProviderInfo> providerInfos = new ArrayList<PersistProviderInfo>();
 
     public RegistryPersistRecord() {

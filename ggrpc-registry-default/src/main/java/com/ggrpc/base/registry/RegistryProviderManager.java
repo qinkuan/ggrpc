@@ -403,6 +403,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
                 this.getServiceMeta(address).remove(serviceMeta);
 
                 if (data.getIsReviewed() == ServiceReviewState.PASS_REVIEW )
+                    // 通知订阅者服务下线
                     this.defaultRegistryServer.getConsumerManager().notifyMacthedSubscriberCancel(meta);
             }
         }
