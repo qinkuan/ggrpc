@@ -30,7 +30,7 @@ public class DefaultServiceProviderContainer implements ServiceProviderContainer
         return serviceProviders.get(uniqueKey);
     }
 
-
+    // 从目前管理的服务中，找到所有支持自动降级的服务，为以后计算判断
     @Override
     public List<Pair<String, CurrentServiceState>> getNeedAutoDegradeService() {
 
@@ -62,7 +62,7 @@ public class DefaultServiceProviderContainer implements ServiceProviderContainer
     public static class CurrentServiceState {
 
 
-        private AtomicBoolean hasDegrade = new AtomicBoolean(false);    // 是否已经降级
+        private AtomicBoolean hasDegrade = new AtomicBoolean(true);    // 是否已经降级
         private AtomicBoolean hasLimitStream = new AtomicBoolean(true); // 是否已经限流
         private AtomicBoolean isAutoDegrade = new AtomicBoolean(false); // 是否已经开始自动降级
         private Integer minSuccecssRate = 90; 							// 服务最低的成功率，调用成功率低于多少开始自动降级

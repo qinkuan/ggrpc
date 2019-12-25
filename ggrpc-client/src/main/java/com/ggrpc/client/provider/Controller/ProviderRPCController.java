@@ -76,6 +76,7 @@ public class ProviderRPCController {
         // app flow control
         if(pair.getValue().isFlowController()){
 
+            // 限流功能实现
             ServiceFlowControllerManager serviceFlowControllerManager = defaultProvider.getProviderController().getServiceFlowControllerManager();
             if (!serviceFlowControllerManager.isAllow(serviceName)) {
                 rejected(APP_FLOW_CONTROL,channel, request,serviceName);

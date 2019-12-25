@@ -88,7 +88,7 @@ public class DefaultProvider implements Provider{
         this.remotingVipExecutor = Executors.newFixedThreadPool(serverConfig.getServerWorkerThreads() / 2, new NamedThreadFactory("providerExecutorThread_"));
         // 注册处理器
         this.registerProcessor();
-
+        // 每个60秒发送注册信息
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
@@ -104,7 +104,7 @@ public class DefaultProvider implements Provider{
                 }
             }
         }, 60, 60, TimeUnit.SECONDS);
-
+        // 检查发布失败的消息
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -118,7 +118,7 @@ public class DefaultProvider implements Provider{
             }
         }, 1, 1, TimeUnit.MINUTES);
 
-        //清理所有的服务的单位时间的失效过期的统计信息
+        //清理所有的服务的单位时间的失效过期的调用次数统计信息
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -129,6 +129,8 @@ public class DefaultProvider implements Provider{
         }, 5, 45, TimeUnit.SECONDS);
 
         // 如果监控中心的地址不是null，则需要定时发送统计信息
+        // 定时发送统计信息到monitor
+        // 每60秒定时发送统计信息到管理中心
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -152,6 +154,7 @@ public class DefaultProvider implements Provider{
 
 
         //检查是否有服务需要自动降级
+        // 每60秒检查服务是否需要自动降级
         this.scheduledExecutorService.scheduleAtFixedRate(new Runnable() {
 
             @Override
@@ -162,6 +165,7 @@ public class DefaultProvider implements Provider{
     }
 
     private void registerProcessor() {
+        // 默认的注册中心发过来的消息处理器
         DefaultProviderRegistryProcessor defaultProviderRegistryProcessor = new DefaultProviderRegistryProcessor(this);
         // provider端作为client端去连接registry注册中心的处理器
         this.nettyRemotingClient.registerProcessor(GGprotocol.DEGRADE_SERVICE, defaultProviderRegistryProcessor, null);
@@ -298,7 +302,7 @@ public class DefaultProvider implements Provider{
 
         // 判断请求的服务名是否在发布的服务中
         boolean checkSerivceIsExist = false;
-
+        // 从发布的服务中，判断是否支持降级
         for (RemotingTransporter eachTransporter : publishRemotingTransporters) {
 
             PublishServiceCustomBody body = (PublishServiceCustomBody) eachTransporter.getCustomBody();
