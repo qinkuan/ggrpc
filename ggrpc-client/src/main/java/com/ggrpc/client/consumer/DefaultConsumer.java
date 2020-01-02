@@ -49,6 +49,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
     // 消费者管理
     private ConsumerManager consumerManager;
     private Channel registyChannel;
+    // 构建消费者
     public DefaultConsumer(NettyClientConfig registryClientConfig, NettyClientConfig providerClientConfig, ConsumerConfig consumerConfig) {
         this.registryClientConfig = registryClientConfig;
         this.providerClientConfig = providerClientConfig;
@@ -57,7 +58,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
         consumerManager = new ConsumerManager(this);
         initialize();
     }
-
+    // 消费者端初始化，包括客户端配置，处理器注册
     private void initialize() {
 
         //因为服务消费端可以直连provider，所以当传递过来的与注册中心连接的配置文件为空的时候，可以不初始化registryNettyRemotingClient
@@ -79,6 +80,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
         // 修改负载均衡策略处理器
         this.registryNettyRemotingClient.registerProcessor(GGprotocol.CHANGE_LOADBALANCE, new DefaultConsumerRegistryProcessor(this), null);
     }
+
     // 订阅服务
     @Override
     public SubscribeManager subscribeService(final String service) {
@@ -86,13 +88,14 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
         SubscribeManager manager = new SubscribeManager() {
 
             private final ReentrantLock lock = new ReentrantLock();
+            // 其他线程进行调用服务时，会等待服务可用，3秒钟
             private final Condition notifyCondition = lock.newCondition();
             private final AtomicBoolean signalNeeded = new AtomicBoolean(false);
 
             @Override
             public void start() {
                 subcribeService(service, new NotifyListener() {
-                    // 订阅服务监听器
+                    // 订阅服务成功后，监听器，进行连接
                     @Override
                     public void notify(RegisterMeta registerMeta, NotifyEvent event) {
 
@@ -110,6 +113,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
 
                                 group.setWeight(registerMeta.getWeight());
 
+                                // 消费端对服务端进行连接，并发channel保存
                                 for (int i = 0; i < connCount; i++) {
 
                                     try {
@@ -122,7 +126,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
                                             @Override
                                             public void operationComplete(ChannelFuture future) throws Exception {
                                                 group.add(future.channel());
-                                                onSucceed(signalNeeded.getAndSet(false));
+                                                onSucceed(signalNeeded.getAndSet(true));
                                             }
 
                                         });
@@ -131,7 +135,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
                                     }
                                 }
                             }else{
-                                onSucceed(signalNeeded.getAndSet(false));
+                                onSucceed(signalNeeded.getAndSet(true));
                             }
                             addChannelGroup(service,group);
                         }else if(event == NotifyEvent.CHILD_REMOVED){
@@ -195,6 +199,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
             }
 
         };
+        // 开始订阅服务
         manager.start();
         return manager;
     }
@@ -222,7 +227,7 @@ public abstract class DefaultConsumer extends AbstractDefaultConsumer{
     }
 
 
-
+    // 启动客户端
     @Override
     public void start() {
 
