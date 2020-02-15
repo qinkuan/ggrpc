@@ -76,6 +76,7 @@ public class ProviderRPCController {
         // app flow control
         if(pair.getValue().isFlowController()){
 
+            // 限流功能实现
             ServiceFlowControllerManager serviceFlowControllerManager = defaultProvider.getProviderController().getServiceFlowControllerManager();
             if (!serviceFlowControllerManager.isAllow(serviceName)) {
                 rejected(APP_FLOW_CONTROL,channel, request,serviceName);
@@ -104,7 +105,7 @@ public class ProviderRPCController {
 
         Object targetCallObj = serviceWrapper.getServiceProvider();
 
-        Object[] args = ((RequestCustomBody)request.getCustomHeader()).getArgs();
+        Object[] args = ((RequestCustomBody)request.getCustomBody()).getArgs();
 
         //判断服务是否已经被设定为自动降级，如果被设置为自动降级且有它自己的mock类的话，则将targetCallObj切换到mock方法上来
         if(currentServiceState.getHasDegrade().get() && serviceWrapper.getMockDegradeServiceProvider() != null){
@@ -152,7 +153,7 @@ public class ProviderRPCController {
             case BAD_REQUEST:
                 result.setError("bad request");
             case SERVICE_NOT_FOUND:
-                result.setError(((RequestCustomBody) request.getCustomHeader()).getServiceName() +" no service found");
+                result.setError(((RequestCustomBody) request.getCustomBody()).getServiceName() +" no service found");
                 break;
             case APP_FLOW_CONTROL:
             case PROVIDER_FLOW_CONTROL:

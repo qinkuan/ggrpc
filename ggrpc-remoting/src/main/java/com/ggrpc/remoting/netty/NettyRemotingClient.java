@@ -277,6 +277,7 @@ public class NettyRemotingClient extends NettyRemotingBase implements RemotingCl
             processMessageReceived(ctx, msg);
         }
 
+
         @Override
         public void channelInactive(ChannelHandlerContext ctx) throws Exception {
             // channleInactive

@@ -35,7 +35,7 @@ public class ConsumerManager {
     private DefaultConsumer defaultConsumer; //consumer模块的代码手持defaultConsumer好办事
     // 读写锁用于更新本地注册列表
     private final ReentrantReadWriteLock registriesLock = new ReentrantReadWriteLock();
-    // 本地存储注册信息
+    // 本地存储注册信息表
     private final Map<String, List<RegisterMeta>> registries = new ConcurrentHashMap<>();
     public ConsumerManager(DefaultConsumer defaultConsumer) {
         this.defaultConsumer = defaultConsumer;

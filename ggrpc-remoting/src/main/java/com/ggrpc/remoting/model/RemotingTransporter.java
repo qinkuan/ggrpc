@@ -30,7 +30,7 @@ public class RemotingTransporter extends ByteHolder{
      * 假如code==1 则CommonCustomBody中则是一些订阅服务的具体信息
      * 假如code==2 则CommonCustomBody中则是一些发布服务的具体信息
      */
-    private transient CommonCustomBody customHeader;
+    private transient CommonCustomBody customBody;
 
     /**
      * 请求的时间戳
@@ -56,13 +56,13 @@ public class RemotingTransporter extends ByteHolder{
     /**
      * 创建一个请求传输对象
      * @param code 请求的类型
-     * @param commonCustomHeader 请求的正文
+     * @param commonCustomBody 请求的正文
      * @return
      */
-    public static RemotingTransporter createRequestTransporter(byte code,CommonCustomBody commonCustomHeader){
+    public static RemotingTransporter createRequestTransporter(byte code,CommonCustomBody commonCustomBody){
         RemotingTransporter remotingTransporter = new RemotingTransporter();
         remotingTransporter.setCode(code);
-        remotingTransporter.customHeader = commonCustomHeader;
+        remotingTransporter.customBody = commonCustomBody;
         remotingTransporter.transporterType = GGprotocol.REQUEST_REMOTING;
         return remotingTransporter;
     }
@@ -70,14 +70,14 @@ public class RemotingTransporter extends ByteHolder{
     /**
      * 创建一个响应对象
      * @param code 响应对象的类型
-     * @param commonCustomHeader 响应对象的正文
+     * @param commonCustomBody 响应对象的正文
      * @param opaque 此响应对象对应的请求对象的id
      * @return
      */
-    public static RemotingTransporter createResponseTransporter(byte code,CommonCustomBody commonCustomHeader,long opaque){
+    public static RemotingTransporter createResponseTransporter(byte code,CommonCustomBody commonCustomBody,long opaque){
         RemotingTransporter remotingTransporter = new RemotingTransporter();
         remotingTransporter.setCode(code);
-        remotingTransporter.customHeader = commonCustomHeader;
+        remotingTransporter.customBody = commonCustomBody;
         remotingTransporter.setOpaque(opaque);
         remotingTransporter.transporterType = GGprotocol.RESPONSE_REMOTING;
         return remotingTransporter;
@@ -116,12 +116,12 @@ public class RemotingTransporter extends ByteHolder{
         this.timestamp = timestamp;
     }
 
-    public CommonCustomBody getCustomHeader() {
-        return customHeader;
+    public CommonCustomBody getCustomBody() {
+        return customBody;
     }
 
-    public void setCustomHeader(CommonCustomBody customHeader) {
-        this.customHeader = customHeader;
+    public void setCustomHeader(CommonCustomBody customBody) {
+        this.customBody = customBody;
     }
 
     // 可以改用工程模式
@@ -136,7 +136,7 @@ public class RemotingTransporter extends ByteHolder{
 
     @Override
     public String toString() {
-        return "RemotingTransporter [code=" + code + ", customHeader=" + customHeader + ", timestamp=" + timestamp + ", opaque=" + opaque
+        return "RemotingTransporter [code=" + code + ", customHeader=" + customBody + ", timestamp=" + timestamp + ", opaque=" + opaque
                 + ", transporterType=" + transporterType + "]";
     }
 

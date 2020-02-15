@@ -90,7 +90,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
     @Override
     public RemotingTransporter handlerRegister(RemotingTransporter remotingTransporter, Channel channel) throws RemotingSendRequestException,
             RemotingTimeoutException, InterruptedException {
-
+        System.out.println("有人连接过来了============="+JSON.toJSONString(remotingTransporter));
         // 准备好ack信息返回个provider，悲观主义，默认返回失败ack，要求provider重新发送请求
         AckCustomBody ackCustomBody = new AckCustomBody(remotingTransporter.getOpaque(), false);
         RemotingTransporter responseTransporter = RemotingTransporter.createResponseTransporter(GGprotocol.ACK, ackCustomBody,
@@ -403,6 +403,7 @@ public class RegistryProviderManager implements RegistryProviderServer {
                 this.getServiceMeta(address).remove(serviceMeta);
 
                 if (data.getIsReviewed() == ServiceReviewState.PASS_REVIEW )
+                    // 通知订阅者服务下线
                     this.defaultRegistryServer.getConsumerManager().notifyMacthedSubscriberCancel(meta);
             }
         }

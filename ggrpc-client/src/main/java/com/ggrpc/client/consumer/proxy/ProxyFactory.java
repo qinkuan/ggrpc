@@ -107,7 +107,7 @@ public class ProxyFactory<T> {
                 isAnnotation = true;
             }
             String serviceName = consumerAnnotation.serviceName();
-
+            // 服务直连
             if(addresses != null && addresses.size() > 0){
                 for (UnresolvedAddress address : addresses) {
                     // 根据服务名称，保存channel 组

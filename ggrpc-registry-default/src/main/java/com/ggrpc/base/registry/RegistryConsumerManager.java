@@ -135,7 +135,7 @@ public class RegistryConsumerManager {
         subcribeResultCustomBody.setLoadBalanceStrategy(null == loadBalanceStrategy ? defaultBalanceStrategy : loadBalanceStrategy);
         subcribeResultCustomBody.setRegisterMeta(registerMetas);
     }
-
+    // 通知订阅者服务下线
     private void pushMessageToConsumer(RemotingTransporter sendConsumerRemotingTrasnporter, String serviceName) throws RemotingSendRequestException,
             RemotingTimeoutException, InterruptedException {
         // 所有的订阅者的channel集合
@@ -151,7 +151,7 @@ public class RegistryConsumerManager {
                         messagesNonAcks.add(msgNonAck);
                     }
                     // 如果消费者端消费者消费失败
-                    AckCustomBody ackCustomBody = (AckCustomBody) remotingTransporter.getCustomHeader();
+                    AckCustomBody ackCustomBody = (AckCustomBody) remotingTransporter.getCustomBody();
                     if (!ackCustomBody.isSuccess()) {
                         logger.warn("consumer fail handler this message");
                         MessageNonAck msgNonAck = new MessageNonAck(remotingTransporter, channel,serviceName);

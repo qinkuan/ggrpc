@@ -26,7 +26,7 @@ public class RemotingTransporterDecoder extends ReplayingDecoder<RemotingTranspo
 		//设置(下文#state()的默认返回对象)
 		super(State.HEADER_MAGIC);
 	}
-
+	// 同过状态模式读取指定的数据 checkpoint 切换状态
 	@Override
 	protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
 		switch (state()) {

@@ -42,7 +42,7 @@ public class DefaultConsumerRegistry {
         if (this.defaultConsumer.getRegistyChannel() == null) {
             this.defaultConsumer.getOrUpdateHealthyChannel();
         }
-
+        // 开始订阅服务
         if (this.defaultConsumer.getRegistyChannel() != null) {
 
             logger.info("registry center channel is [{}]", this.defaultConsumer.getRegistyChannel());
@@ -57,6 +57,7 @@ public class DefaultConsumerRegistry {
                 // 处理注册响应
                 RemotingTransporter ackTransporter = this.defaultConsumer.getConsumerManager().handlerSubcribeResult(registryResponse,
                         this.defaultConsumer.getRegistyChannel());
+                // 对注册中心发送过来的服务信息进行响应
                 this.defaultConsumer.getRegistyChannel().writeAndFlush(ackTransporter);
             } catch (Exception e) {
                 logger.warn("registry failed [{}]", e.getMessage());
@@ -69,7 +70,7 @@ public class DefaultConsumerRegistry {
 
     }
 
-
+    // 通过客户端向注册中心发送消息
     private RemotingTransporter sendKernelSubscribeInfo(Channel registyChannel, RemotingTransporter remotingTransporter, long timeout)
             throws RemotingTimeoutException, RemotingSendRequestException, InterruptedException {
         // 通过客户端向注册中心发送消息

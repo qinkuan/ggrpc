@@ -40,18 +40,18 @@ public class ProviderRegistryController {
         //获取到所有需要降级的服务名
         List<Pair<String, DefaultServiceProviderContainer.CurrentServiceState>> needDegradeServices = providerContainer.getNeedAutoDegradeService();
 
-        //如果当前实例需要降级的服务列表不为空的情况下，循环每个列表
+        //如果当前实例需要自动降级降级的服务列表不为空的情况下，循环每个列表
         if (!needDegradeServices.isEmpty()) {
 
             for (Pair<String, DefaultServiceProviderContainer.CurrentServiceState> pair : needDegradeServices) {
 
                 //服务名
                 String serviceName = pair.getKey();
-                //最低成功率
+                //配置的最低成功率
                 Integer minSuccessRate = pair.getValue().getMinSuccecssRate();
                 //调用的实际成功率
                 Integer realSuccessRate = ServiceMeterManager.calcServiceSuccessRate(serviceName);
-
+                // 若果成功率过低，则将服务降级
                 if (minSuccessRate > realSuccessRate) {
 
                     final Pair<DefaultServiceProviderContainer.CurrentServiceState, ServiceWrapper> _pair = this.defaultProvider.getProviderController().getProviderContainer()

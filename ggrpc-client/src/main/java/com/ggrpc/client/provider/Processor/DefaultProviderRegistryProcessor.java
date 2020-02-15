@@ -36,8 +36,10 @@ public class DefaultProviderRegistryProcessor implements NettyRequestProcessor {
         }
 
         switch (request.getCode()) {
+            // 降级
             case DEGRADE_SERVICE:
                 return this.defaultProvider.handlerDegradeServiceRequest(request,ctx.channel(),DEGRADE_SERVICE);
+            // 自动降级
             case AUTO_DEGRADE_SERVICE:
                 return this.defaultProvider.handlerDegradeServiceRequest(request,ctx.channel(),AUTO_DEGRADE_SERVICE);
         }

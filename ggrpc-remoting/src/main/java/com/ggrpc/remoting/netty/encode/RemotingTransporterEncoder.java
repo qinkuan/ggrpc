@@ -24,7 +24,7 @@ public class RemotingTransporterEncoder  extends MessageToByteEncoder<RemotingTr
     }
 
     private void doEncodeRemotingTransporter(RemotingTransporter msg, ByteBuf out) throws IOException {
-        byte[] body = SerializerHolder.serializerImpl().writeObject(msg.getCustomHeader());
+        byte[] body = SerializerHolder.serializerImpl().writeObject(msg.getCustomBody());
 
 
         byte isCompress = GGprotocol.UNCOMPRESS;

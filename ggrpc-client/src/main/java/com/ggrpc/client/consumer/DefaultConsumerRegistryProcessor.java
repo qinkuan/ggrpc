@@ -37,7 +37,7 @@ public class DefaultConsumerRegistryProcessor implements NettyRequestProcessor {
                     request);
         }
 
-
+        // 处理注册中心发过来的响应
         switch (request.getCode()) {
             case SUBCRIBE_RESULT:
                 // 回复ack信息 这个也要保持幂等性，因为有可能在consumer消费成功之后发送ack信息到registry信息丢失，registry回重新发送订阅结果信息
