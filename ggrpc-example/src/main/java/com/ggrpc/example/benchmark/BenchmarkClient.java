@@ -46,12 +46,12 @@ public class BenchmarkClient {
 
 		final HelloService helloService = ProxyFactory.factory(HelloService.class).consumer(client).timeoutMillis(3000l).newProxyInstance();
 
-		for (int i = 0; i < 5000; i++) {
+		for (int i = 0; i < 500; i++) {
 			String str = helloService.sayHello("Lyncc");
 			System.out.println(str);
 		}
-		final int t = 500;
-		final int step = 3;
+		final int t = 1000;
+		final int step = 10;
 		long start = System.currentTimeMillis();
 		final CountDownLatch latch = new CountDownLatch(processors << step);
 		final AtomicLong count = new AtomicLong();
@@ -62,7 +62,12 @@ public class BenchmarkClient {
 				public void run() {
 					for (int i = 0; i < t; i++) {
 						try {
-							helloService.sayHello("Lyncc");
+							helloService.sayHello("Lynccaaaaaaaaaaasfffffffffffff" +
+									"fffffffffffffffasddddddddddd" +
+									"dddddddddddddddddddddddd" +
+									"asddddddd" +
+									"sadassssssssss" +
+									"asdassssssssdddddd");
 
 							if (count.getAndIncrement() % 10000 == 0) {
 								logger.warn("count=" + count.get());
